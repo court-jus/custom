@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<style>
+		body, html {
+			width: 100%;
+			height: 100%;
+			margin: 0px;
+		}
+		body {
+			display: flex;
+			align-items: stretch;
+			justify-content: stretch;
+		}
+    form {
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      max-width: 600px;
+    }
+    form > * {
+      width: 100%;
+    }
+		.container {
+			width: 100%;
+			margin: 40px;
+			padding: 40px;
+			background-color: rgba(255, 255, 255, 0.7);
+			border: 1px solid blue;
+			box-shadow: 0 0 0 1px #0060DF, 0 0 0 4px rgba(0, 96, 223, 0.3);
+			border-radius: 3px;
+		}
+		h1 {
+			font-family: sans-serif;
+			display: block;
+			margin: 0px;
+			font-size: 3em;
+			text-align: center;
+		}
+	</style>
+	</head>
+	<body>
+	<div class="container">
+		<h1 class="title">Message creation form</h1>
+		<form onsubmit="return validate(event)">
+      <p>Message content</p>
+			<input class="title" type="text" name="title" placeholder="Message title" />
+			<textarea class="msg" name="message" placeholder="Message"></textarea>
+      <p>Look & feel</p>
+      <input class="url" type="text" name="bgimg" placeholder="Optional background image URL" />
+      <select name="template">
+        <option value="">Default template</option>
+        <option value="flat">Flat</option>
+        <option value="left">Left side of the screen</option>
+        <option value="right">Right side of the screen</option>
+      </select>
+      <p>Colors</p>
+      {% for color in range(10) %}
+        <input class="color" type="text" name="color{{ color }}" placeholder="Color {{ color }}" />
+      {% endfor %}
+      <p>&nbsp;</p>
+			<button class="okbtn">OK</button>
+      <button class="rstbtn" onclick="reset()">Reset</button>
+		</form>
+	</div>
+	<script type="text/javascript">
+    function reset() {
+      window.location = "";
+    }
+		function validate(event) {
+      var title = encodeURIComponent(event.srcElement.title.value),
+          msg = event.srcElement.message.value
+            .split("\n")
+            .map(encodeURIComponent)
+            .join("/"),
+          bgimg = encodeURIComponent(event.srcElement.bgimg.value),
+          template = event.srcElement.template.value,
+          url = title + "/" + msg + "/",
+          params = [];
+      console.log(bgimg);
+      if (bgimg !== "") params.push("bgimg=" + bgimg);
+      if (template !== "") params.push("template=" + template);
+      if (event.srcElement.color1.value !== "") params.push("color1=" + color1);
+      if (params.length > 0) {
+        url += "?" + params.join("&")
+      }
+      window.location = url;
+      return false;
+		}
+	</script>
+  </body>
+</html>
