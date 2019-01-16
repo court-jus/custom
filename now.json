@@ -1,6 +1,7 @@
 {
     "version": 2,
-    "name": "customtwitter",
+    "name": "custom",
+    "alias": "leveque.now.sh",
     "builds": [
         { "src": "*.py", "use": "@liudonghua123/now-flask" , "config": { "maxLambdaSize": "30mb" } }
     ],
