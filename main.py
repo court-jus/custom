@@ -20,15 +20,21 @@ def health_check():
     return "Up and running"
 
 
-@app.route("/message/")
+@app.route("/")
 def message_form():
+    """
+    Display the message creation form.
+    """
     return render_template(f"message/form/main.html")
 
 
-@app.route("/message/<title>/<path:messages>/")
+@app.route("/show/<title>/<path:messages>/")
 def render_message(title, messages):
+    """
+    Display a message with title, messages and various options.
+    """
     messages = messages.split("/")
-    kwargs = request.args
+    kwargs = unquote_colors(request.args)
     template = kwargs.get("template", "default")
     try:
         context = extra_context()
@@ -43,3 +49,13 @@ def render_message(title, messages):
             template=template,
             **context,
         )
+
+
+def unquote_colors(context):
+    """
+    URL unqote colors from context.
+    """
+    for k, v in context.items():
+        if len(v) == 9 and v.startswith("%23"):
+            context[k] = "#" + v[3:]
+    return context

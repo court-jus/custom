@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8"/>
-		<style>
-		body, html {
-			width: 100%;
-			height: 100%;
-			margin: 0px;
-		}
-		body {
-			display: flex;
-			align-items: stretch;
-			justify-content: stretch;
-		}
+<head>
+    <meta charset="utf-8"/>
+    <style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+    }
+    body {
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+    }
     form {
       margin: auto;
       display: flex;
@@ -24,28 +24,52 @@
     form > * {
       width: 100%;
     }
-		.container {
-			width: 100%;
-			margin: 40px;
-			padding: 40px;
-			background-color: rgba(255, 255, 255, 0.7);
-			border: 1px solid blue;
-			box-shadow: 0 0 0 1px #0060DF, 0 0 0 4px rgba(0, 96, 223, 0.3);
-			border-radius: 3px;
-		}
-		h1 {
-			font-family: sans-serif;
-			display: block;
-			margin: 0px;
-			font-size: 3em;
-			text-align: center;
-		}
+    .colors {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        max-height: 8em;
+    }
+    .colors input[type="color"] {
+        width: 120px;
+    }
+    .container {
+        width: 100%;
+        margin: 10px;
+        padding: 0px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 3px;
+    }
+    h1 {
+        font-family: sans-serif;
+        display: block;
+        margin: 0px;
+        font-size: 2em;
+        text-align: center;
+    }
+    .buttons {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .buttons > * {
+        width: 100%;
+        margin: 10px;
+        font-weight: bold;
+    }
+    .okbtn {
+        background-color: #33cc33;
+    }
 	</style>
 	</head>
 	<body>
 	<div class="container">
-		<h1 class="title">Message creation form</h1>
-		<form onsubmit="return validate(event)">
+	  <h1 class="title">Message creation form</h1>
+	  <form id="msgform" onsubmit="return false;">
       <p>Message content</p>
 			<input class="title" type="text" name="title" placeholder="Message title" />
 			<textarea class="msg" name="message" placeholder="Message"></textarea>
@@ -58,37 +82,54 @@
         <option value="right">Right side of the screen</option>
       </select>
       <p>Colors</p>
+      <div class="colors">
       {% for color in range(10) %}
-        <input class="color" type="text" name="color{{ color }}" placeholder="Color {{ color }}" />
+        <div>
+        <input type="checkbox" id="enablecolor{{ color}}" name="enablecolor{{ color }}" />
+        <input class="color"
+               type="color"
+               name="color{{ color }}"
+               placeholder="Color {{ color }}"
+               oninput="enableColor({{ color }})"
+               />
+        </div>
       {% endfor %}
-      <p>&nbsp;</p>
-			<button class="okbtn">OK</button>
+      </div>
+      <div class="buttons">
+      <button class="okbtn" onclick="validate()">OK</button>
       <button class="rstbtn" onclick="reset()">Reset</button>
-		</form>
+      </div>
+	  </form>
 	</div>
 	<script type="text/javascript">
     function reset() {
-      window.location = "";
+      window.location = "/";
     }
-		function validate(event) {
-      var title = encodeURIComponent(event.srcElement.title.value),
-          msg = event.srcElement.message.value
+    function enableColor(colornum) {
+        document.getElementById("enablecolor" + colornum).checked = true;
+    }
+    function validate(event) {
+      var form = document.getElementById("msgform"),
+          title = encodeURIComponent(form.title.value),
+          msg = form.message.value
             .split("\n")
             .map(encodeURIComponent)
             .join("/"),
-          bgimg = encodeURIComponent(event.srcElement.bgimg.value),
-          template = event.srcElement.template.value,
-          url = title + "/" + msg + "/",
+          bgimg = encodeURIComponent(form.bgimg.value),
+          template = form.template.value,
+          url = "/show/" + title + "/" + msg + "/",
           params = [];
-      console.log(bgimg);
       if (bgimg !== "") params.push("bgimg=" + bgimg);
       if (template !== "") params.push("template=" + template);
-      if (event.srcElement.color1.value !== "") params.push("color1=" + color1);
+      {% for color in range(10) %}
+        if (form.enablecolor{{ color }}.checked) {
+            params.push("color{{ color }}=" + encodeURIComponent(form.color{{ color }}.value));
+        }
+      {% endfor %}
       if (params.length > 0) {
         url += "?" + params.join("&")
       }
       window.location = url;
-      return false;
 		}
 	</script>
   </body>

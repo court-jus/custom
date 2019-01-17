@@ -5,13 +5,13 @@
         <style>
         :root {
             /* Palette */
-            --bgcolor: {{ color1 or "transparent" }};
-            --containercolor: {{ color2 or "rgba(255, 255, 255, 0.7)" }};
-            --bordercolor: {{ color3 or "#0060DF" }};
-            --bordercolor2: {{ color4 or "rgba(0, 96, 223, 0.3)" }};
-            --clockcolor: {{ color5 or "#5988d8" }};
-            --textcolor: {{ color6 or "black" }};
-            --titlecolor: {{ color7 or color6 or "black" }};
+            --bgcolor: {{ color0 or "transparent" }};
+            --containercolor: {{ color1 or "rgba(255, 255, 255, 0.7)" }};
+            --bordercolor: {{ color2 or "#0060DF" }};
+            --bordercolor2: {{ color3 or "rgba(0, 96, 223, 0.3)" }};
+            --clockcolor: {{ color4 or "#5988d8" }};
+            --textcolor: {{ color5 or "black" }};
+            --titlecolor: {{ color6 or color5 or "black" }};
         }
         body, html {
             width: 100%;
@@ -20,8 +20,14 @@
             color: var(--textcolor);
         }
         body {
-            background-image: url('{{ bgimg or "https://picsum.photos/1920/1080/?random" }}');
-            background-color: var(--bgcolor);
+            {% if bgimg %}
+              background-image: url('{{ bgimg }}');
+            {% elif color0 %}
+              background-image: none;
+              background-color: var(--bgcolor);
+            {% else %}
+              background-image: url('https://picsum.photos/1920/1080/?random');
+            {% endif %}
             display: flex;
             align-items: stretch;
             justify-content: stretch;
